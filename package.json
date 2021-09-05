@@ -1,0 +1,19 @@
+{
+  "name": "letter-boxed",
+  "version": "1.0.0",
+  "description": "NYTimes Letter Boxed Solver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hunterlarco/letter-boxed.git"
+  },
+  "author": "Hunter John Larco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hunterlarco/letter-boxed/issues"
+  },
+  "homepage": "https://github.com/hunterlarco/letter-boxed#readme"
+}
