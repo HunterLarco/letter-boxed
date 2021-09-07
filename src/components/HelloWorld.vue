@@ -9,14 +9,21 @@ import dictionary from "../assets/dictionary.json";
 
 function prune(trie, letters) {
   const root = {
-    children: [],
+    children: {},
     isEnd: trie.isEnd,
   };
 
   for (const [letter, child] of Object.entries(trie.children)) {
-    if (letters.has(letter)) {
-      root.children[letter] = prune(child, letters);
+    if (!letters.has(letter)) {
+      continue;
     }
+
+    const subtree = prune(child, letters);
+    if (Object.keys(subtree.children).length == 0 && !subtree.isEnd) {
+      continue;
+    }
+
+    root.children[letter] = subtree;
   }
 
   return root;
@@ -25,6 +32,8 @@ function prune(trie, letters) {
 function solver({ edges }) {
   const totalLetters = new Set(edges.join("").split(""));
   const domain = prune(dictionary, totalLetters);
+
+  console.log(domain);
 
   let iteration = {
     current: [],
@@ -35,12 +44,14 @@ function solver({ edges }) {
   // Bootstrap the broadphase iteration.
   for (let i = 0; i < edges.length; ++i) {
     for (const character of edges[i]) {
-      iteration.current.push({
-        path: [character],
-        letters: new Set(character),
-        edge: i,
-        node: domain.children[character],
-      });
+      if (domain.children[character]) {
+        iteration.current.push({
+          path: [character],
+          letters: new Set(character),
+          edge: i,
+          node: domain.children[character],
+        });
+      }
     }
   }
 
@@ -141,7 +152,9 @@ export default {
 
 .Box {
   background: #fff;
-  height: 300px;
+  border: 3px solid #000;
+
   width: 300px;
+  height: 300px;
 }
 </style>
