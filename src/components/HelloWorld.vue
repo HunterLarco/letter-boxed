@@ -45,7 +45,15 @@ function solver({ edges }) {
   }
 
   while (iteration.current.length > 0) {
+    const solutions = [];
     for (const step of iteration.current) {
+      if (step.letters.size == totalLetters.size && step.node.isEnd) {
+        solutions.push(step.path);
+      }
+      if (solutions.length > 0) {
+        continue;
+      }
+
       for (let i = 0; i < edges.length; ++i) {
         if (i == step.edge) {
           continue;
@@ -53,10 +61,6 @@ function solver({ edges }) {
 
         for (const character of edges[i]) {
           const usedLetters = new Set([...step.letters, character]);
-
-          if (usedLetters.size == totalLetters.size) {
-            return step.path;
-          }
 
           const node = step.node.children[character];
           if (node) {
@@ -69,27 +73,31 @@ function solver({ edges }) {
               node,
             };
 
-            if (usedLetters.size > step.letters.size) {
-              iteration.next.push(nextStep);
-            } else {
-              iteration.stash.push(nextStep);
-            }
-          }
-
-          if (step.node.isEnd) {
-            const lastWord = step.path[step.path.length - 1];
-            const lastLetter = lastWord[lastWord.length - 1];
-            const nextStep = {
-              path: [...step.path, lastLetter + character],
-              letters: new Set([...step.letters, character]),
-              edge: i,
-              node: domain.children[lastLetter],
-            };
-
-            iteration.stash.push(nextStep);
+            iteration.next.push(nextStep);
           }
         }
       }
+
+      if (step.node.isEnd) {
+        const lastWord = step.path[step.path.length - 1];
+        const lastLetter = lastWord[lastWord.length - 1];
+
+        const node = domain.children[lastLetter];
+        if (node) {
+          const nextStep = {
+            path: [...step.path, lastLetter],
+            letters: new Set([...step.letters]),
+            edge: step.edge,
+            node: node,
+          };
+
+          iteration.stash.push(nextStep);
+        }
+      }
+    }
+
+    if (solutions.length > 0) {
+      return solutions;
     }
 
     if (iteration.next.length > 0) {
@@ -109,7 +117,8 @@ export default {
     solve_() {
       console.log("Starting solver");
       const solution = solver({
-        edges: ["uvt", "ilf", "dbc", "noa"],
+        edges: ["tai", "nec", "mfr", "hlu"],
+        // edges: ["uyt", "ilf", "dbc", "noa"],
       });
       console.log("Solution", solution);
     },
