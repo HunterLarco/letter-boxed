@@ -29,6 +29,7 @@ function solver({ edges }) {
   let iteration = {
     current: [],
     next: [],
+    stash: [],
   };
 
   // Bootstrap the broadphase iteration.
@@ -60,6 +61,7 @@ function solver({ edges }) {
 
         for (const character of edges[i]) {
           const usedLetters = new Set([...step.letters, character]);
+          const newLetter = usedLetters.size > step.letters.size;
 
           const node = step.node.children[character];
           if (node) {
@@ -72,7 +74,11 @@ function solver({ edges }) {
               node,
             };
 
-            iteration.next.push(nextStep);
+            if (newLetter) {
+              iteration.next.push(nextStep);
+            } else {
+              iteration.stash.push(nextStep);
+            }
           }
         }
       }
@@ -90,7 +96,7 @@ function solver({ edges }) {
             node: node,
           };
 
-          iteration.next.push(nextStep);
+          iteration.stash.push(nextStep);
         }
       }
     }
@@ -99,8 +105,13 @@ function solver({ edges }) {
       return solutions;
     }
 
-    iteration.current = iteration.next;
-    iteration.next = [];
+    if (iteration.next.length > 0) {
+      iteration.current = iteration.next;
+      iteration.next = [];
+    } else {
+      iteration.current = iteration.stash;
+      iteration.stash = [];
+    }
   }
 }
 
@@ -111,8 +122,8 @@ export default {
     solve_() {
       console.log("Starting solver");
       const solution = solver({
-        // edges: ["tai", "nec", "mfr", "hlu"],
-        edges: ["uyt", "ilf", "dbc", "noa"],
+        edges: ["tai", "nec", "mfr", "hlu"],
+        // edges: ["uyt", "ilf", "dbc", "noa"],
       });
       console.log("Solution", solution);
     },
