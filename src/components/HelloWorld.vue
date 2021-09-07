@@ -29,7 +29,6 @@ function solver({ edges }) {
   let iteration = {
     current: [],
     next: [],
-    stash: [],
   };
 
   // Bootstrap the broadphase iteration.
@@ -91,7 +90,7 @@ function solver({ edges }) {
             node: node,
           };
 
-          iteration.stash.push(nextStep);
+          iteration.next.push(nextStep);
         }
       }
     }
@@ -100,13 +99,8 @@ function solver({ edges }) {
       return solutions;
     }
 
-    if (iteration.next.length > 0) {
-      iteration.current = iteration.next;
-      iteration.next = [];
-    } else {
-      iteration.current = iteration.stash;
-      iteration.stash = [];
-    }
+    iteration.current = iteration.next;
+    iteration.next = [];
   }
 }
 
@@ -117,8 +111,8 @@ export default {
     solve_() {
       console.log("Starting solver");
       const solution = solver({
-        edges: ["tai", "nec", "mfr", "hlu"],
-        // edges: ["uyt", "ilf", "dbc", "noa"],
+        // edges: ["tai", "nec", "mfr", "hlu"],
+        edges: ["uyt", "ilf", "dbc", "noa"],
       });
       console.log("Solution", solution);
     },
