@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import './styles/layout.scss';
+@import "./styles/layout.scss";
 
 #app {
   @include layout-fill;
