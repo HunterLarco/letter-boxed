@@ -14,12 +14,15 @@ export default {
 </script>
 
 <style lang="scss">
+@import './styles/layout.scss';
+
 #app {
+  @include layout-fill;
+
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+
+  background: #e0938e;
 }
 </style>
