@@ -1,6 +1,6 @@
 <template>
   <div class="Host">
-    <div class="Box"></div>
+    <div class="Box" @click="solve_"></div>
   </div>
 </template>
 
@@ -22,23 +22,98 @@ function prune(trie, letters) {
   return root;
 }
 
-function solver(top, right, bottom, left) {
-  console.assert(top.size == right.size);
-  console.assert(top.size == bottom.size);
-  console.assert(top.size == left.size);
+function solver({ edges }) {
+  const totalLetters = new Set(edges.join("").split(""));
+  const domain = prune(dictionary, totalLetters);
 
-  const domain = prune(
-    dictionary,
-    new Set([...top, ...right, ...bottom, ...left])
-  );
+  let iteration = {
+    current: [],
+    next: [],
+    stash: [],
+  };
+
+  // Bootstrap the broadphase iteration.
+  for (let i = 0; i < edges.length; ++i) {
+    for (const character of edges[i]) {
+      iteration.current.push({
+        path: [character],
+        letters: new Set(character),
+        edge: i,
+        node: domain.children[character],
+      });
+    }
+  }
+
+  while (iteration.current.length > 0) {
+    for (const step of iteration.current) {
+      for (let i = 0; i < edges.length; ++i) {
+        if (i == step.edge) {
+          continue;
+        }
+
+        for (const character of edges[i]) {
+          const usedLetters = new Set([...step.letters, character]);
+
+          if (usedLetters.size == totalLetters.size) {
+            return step.path;
+          }
+
+          const node = step.node.children[character];
+          if (node) {
+            const nextPath = [...step.path];
+            nextPath[nextPath.length - 1] += character;
+            const nextStep = {
+              path: nextPath,
+              letters: new Set([...step.letters, character]),
+              edge: i,
+              node,
+            };
+
+            if (usedLetters.size > step.letters.size) {
+              iteration.next.push(nextStep);
+            } else {
+              iteration.stash.push(nextStep);
+            }
+          }
+
+          if (step.node.isEnd) {
+            const lastWord = step.path[step.path.length - 1];
+            const lastLetter = lastWord[lastWord.length - 1];
+            const nextStep = {
+              path: [...step.path, lastLetter + character],
+              letters: new Set([...step.letters, character]),
+              edge: i,
+              node: domain.children[lastLetter],
+            };
+
+            iteration.stash.push(nextStep);
+          }
+        }
+      }
+    }
+
+    if (iteration.next.length > 0) {
+      iteration.current = iteration.next;
+      iteration.next = [];
+    } else {
+      iteration.current = iteration.stash;
+      iteration.stash = [];
+    }
+  }
 }
-
-console.log(
-  solver(new Set("uvt"), new Set("ilf"), new Set("dbc"), new Set("noa"))
-);
 
 export default {
   name: "HelloWorld",
+
+  methods: {
+    solve_() {
+      console.log("Starting solver");
+      const solution = solver({
+        edges: ["uvt", "ilf", "dbc", "noa"],
+      });
+      console.log("Solution", solution);
+    },
+  },
 };
 </script>
 
