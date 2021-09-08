@@ -1,6 +1,62 @@
 <template>
   <div class="Host">
-    <div class="Box" @click="solve_"></div>
+    <div class="Form">
+      <input
+        class="Input"
+        maxlength="3"
+        placeholder="Top"
+        ref="top"
+        v-model="edges.top"
+        @keydown="enforcePattern_($event, /^[a-zA-Z]*$/)"
+        @keyup="moveFocus_($event, 'right')"
+      />
+
+      <input
+        class="Input"
+        maxlength="3"
+        placeholder="Right"
+        ref="right"
+        v-model="edges.right"
+        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
+        @keyup="moveFocus_($event, 'bottom')"
+      />
+
+      <input
+        class="Input"
+        maxlength="3"
+        placeholder="Bottom"
+        ref="bottom"
+        v-model="edges.bottom"
+        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
+        @keyup="moveFocus_($event, 'left')"
+      />
+
+      <input
+        class="Input"
+        maxlength="3"
+        placeholder="Left"
+        ref="left"
+        v-model="edges.left"
+        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
+        @keyup="moveFocus_($event, 'submit')"
+      />
+
+      <div
+        :class="submitEnabled_ ? 'Button' : 'Button_Disabled'"
+        ref="submit"
+        tabindex="0"
+        @click="submit_"
+        @keypress.enter="submit_"
+      >
+        Solve
+      </div>
+
+      <div class="Solution" v-for="solution of solutions">
+        <div class="Word" v-for="word of solution">
+          {{ word }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -10,13 +66,84 @@ import { letterBoxed } from "../solver/solver.js";
 export default {
   name: "HelloWorld",
 
+  data() {
+    return {
+      solutions: [],
+      edges: {
+        top: "",
+        right: "",
+        bottom: "",
+        left: "",
+      },
+    };
+  },
+
   methods: {
-    solve_() {
-      console.log("Starting solver");
-      const solution = letterBoxed({
-        edges: ["tai", "nec", "mfr", "hlu"],
+    enforcePattern_(event, pattern) {
+      if (event.key.length > 1) {
+        // Probably a modifier key so we should allow it.
+        return true;
+      }
+
+      if (!pattern.test(event.key)) {
+        event.preventDefault();
+        return false;
+      }
+
+      return true;
+    },
+
+    moveFocus_(event, ref) {
+      if (event.key.length > 1) {
+        // Don't move focus when modifier keys are pressed. Only during
+        // character entry.
+        return;
+      }
+
+      if (this.submitEnabled_) {
+        this.$refs.submit.focus();
+        return;
+      }
+
+      const maxLength = parseInt(event.target.getAttribute("maxlength"));
+      if (event.target.value.length >= maxLength) {
+        this.$refs[ref].focus();
+      }
+    },
+
+    submit_() {
+      this.solutions = letterBoxed({
+        edges: [
+          this.edges.top,
+          this.edges.right,
+          this.edges.bottom,
+          this.edges.left,
+        ],
       });
-      console.log("Solution", solution);
+    },
+  },
+
+  computed: {
+    submitEnabled_() {
+      const topMaxLength = this.$refs.top
+        ? this.$refs.top.getAttribute("maxlength")
+        : undefined;
+      const rightMaxLength = this.$refs.right
+        ? this.$refs.right.getAttribute("maxlength")
+        : undefined;
+      const bottomMaxLength = this.$refs.bottom
+        ? this.$refs.bottom.getAttribute("maxlength")
+        : undefined;
+      const leftMaxLength = this.$refs.left
+        ? this.$refs.left.getAttribute("maxlength")
+        : undefined;
+
+      return (
+        this.edges.top.length == topMaxLength &&
+        this.edges.right.length == rightMaxLength &&
+        this.edges.bottom.length == bottomMaxLength &&
+        this.edges.left.length == leftMaxLength
+      );
     },
   },
 };
@@ -30,11 +157,53 @@ export default {
   @include layout-fill;
 }
 
-.Box {
-  background: #fff;
-  border: 3px solid #000;
+.Form {
+}
 
-  width: 300px;
-  height: 300px;
+.Input {
+  background: rgba(#fff, 0.25);
+  border-radius: 0;
+  border: none;
+  font-size: 20px;
+  outline: none;
+  padding: 10px;
+  text-transform: uppercase;
+  width: 100px;
+
+  &:focus {
+    background: rgba(#fff, 0.5);
+  }
+}
+
+.Button {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 20px;
+  padding: 10px;
+  background: blue;
+
+  &:focus {
+    background: yellow;
+    outline: none;
+  }
+}
+
+.Button_Disabled {
+  @extend .Button;
+
+  background: gray;
+  cursor: not-allowed;
+}
+
+.Solution {
+}
+
+.Word {
+  display: inline-block;
+
+  & + .Word::before {
+    content: '\2192';
+    padding: 0 4px;
+  }
 }
 </style>

@@ -101,7 +101,6 @@ export function letterBoxed({ edges }) {
   while (iteration.current.length > 0) {
     const solutions = [];
     for (const branch of iteration.current) {
-
       // If the current branch has progressed to a word end and has used all of
       // the letters, add it to the solutions list.
       if (branch.letters.size == letters.size && branch.node.isEnd) {
