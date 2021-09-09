@@ -51,24 +51,46 @@
         Solve
       </div>
 
-      <div class="Solution" v-for="solution of solutions">
-        <div class="Word" v-for="word of solution">
-          {{ word }}
-        </div>
+      <div class="Solutions">
+        <template v-if="solutions.minWords.length">
+          <div><br /><b>Min Words:</b></div>
+
+          <div class="Solution" v-for="solution of solutions.minWords">
+            <div class="Word" v-for="word of solution">
+              {{ word }}
+            </div>
+            ({{ solution.join("").length }})
+          </div>
+        </template>
+
+        <template v-if="solutions.minLetters.length">
+          <div><br /><b>Min Letters:</b></div>
+
+          <div class="Solution" v-for="solution of solutions.minLetters">
+            <div class="Word" v-for="word of solution">
+              {{ word }}
+            </div>
+            ({{ solution.join("").length }})
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { letterBoxed } from "../solver/solver.js";
+import { letterBoxed, LetterBoxedMode } from "../solver/solver.js";
 
 export default {
   name: "HelloWorld",
 
   data() {
     return {
-      solutions: [],
+      solutions: {
+        minLetters: [],
+        minWords: [],
+      },
+
       edges: {
         top: "",
         right: "",
@@ -112,13 +134,24 @@ export default {
     },
 
     submit_() {
-      this.solutions = letterBoxed({
+      this.solutions.minWords = letterBoxed({
         edges: [
           this.edges.top,
           this.edges.right,
           this.edges.bottom,
           this.edges.left,
         ],
+        mode: LetterBoxedMode.MinWords,
+      });
+
+      this.solutions.minLetters = letterBoxed({
+        edges: [
+          this.edges.top,
+          this.edges.right,
+          this.edges.bottom,
+          this.edges.left,
+        ],
+        mode: LetterBoxedMode.MinLetters,
       });
     },
   },
@@ -195,6 +228,9 @@ export default {
   cursor: not-allowed;
 }
 
+.Solutions {
+}
+
 .Solution {
 }
 
@@ -202,7 +238,7 @@ export default {
   display: inline-block;
 
   & + .Word::before {
-    content: '\2192';
+    content: "\2192";
     padding: 0 4px;
   }
 }

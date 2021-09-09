@@ -33,6 +33,11 @@ function prune(trie, letters) {
   return root;
 }
 
+export const LetterBoxedMode = {
+  MinLetters: Symbol("MinLetters"),
+  MinWords: Symbol("MinWords"),
+};
+
 /**
  * Given the edges of a Letter Boxed puzzle, determine the set of solutions with
  * using the least number of characters.
@@ -40,10 +45,13 @@ function prune(trie, letters) {
  * @param {Object} obj An object.
  * @param {Array<string>} obj.edges The edges of the puzzle. Note that any
  *     number of edges are allowed and they do not need to be uniform.
+ * @param {LetterBoxedMode} obj.mode The optimization strategy of the solver.
  *
  * @return {Array<Array<string>>} An array of all solutions.
  */
-export function letterBoxed({ edges }) {
+export function letterBoxed(obj) {
+  const { edges = [], mode = LetterBoxedMode.MinLetters } = obj;
+
   // To solve a Letter Boxed puzzle we...
   //
   // 1. Construct a Trie Tree from the dictionary.
@@ -79,7 +87,8 @@ export function letterBoxed({ edges }) {
   const iteration = {
     current: [],
     next: [],
-    stash: [],
+    charStash: [],
+    wordStash: [],
   };
 
   // Bootstrap the search by adding each letter in the puzzle to the currently
@@ -146,7 +155,7 @@ export function letterBoxed({ edges }) {
               // If the next branch would re-use a letter, stash it for later
               // processing so that it's only enumerated once more optimal
               // branches have been exhausted.
-              iteration.stash.push(nextBranch);
+              iteration.charStash.push(nextBranch);
             }
           }
         }
@@ -170,7 +179,11 @@ export function letterBoxed({ edges }) {
           // Starting a new word always requires re-using at least one letter,
           // so this must always be stashed so that processing occurs once more
           // optimal branches have been exhausted.
-          iteration.stash.push(nextBranch);
+          if (mode == LetterBoxedMode.MinWords) {
+            iteration.wordStash.push(nextBranch);
+          } else {
+            iteration.charStash.push(nextBranch);
+          }
         }
       }
     }
@@ -184,11 +197,16 @@ export function letterBoxed({ edges }) {
       // If branches are slated for immediate iteration, progress them next.
       iteration.current = iteration.next;
       iteration.next = [];
+    } else if (iteration.charStash.length > 0) {
+      // If no branches are slated for immediate iteration, we must have
+      // exhausted all optimal branches and should resume any stashed branches.
+      iteration.current = iteration.charStash;
+      iteration.charStash = [];
     } else {
       // If no branches are slated for immediate iteration, we must have
       // exhausted all optimal branches and should resume any stashed branches.
-      iteration.current = iteration.stash;
-      iteration.stash = [];
+      iteration.current = iteration.wordStash;
+      iteration.wordStash = [];
     }
   }
 }
