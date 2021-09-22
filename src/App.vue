@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
   name: "App",
@@ -23,6 +23,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background: #e0938e;
+  background: #F8AA9E;
+}
+
+* {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  padding: 0;
 }
 </style>

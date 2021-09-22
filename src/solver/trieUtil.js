@@ -60,7 +60,7 @@ export function statistics(trie) {
     maxDepth: 1,
   };
 
-  for (const [letter, child] of Object.entries(trie.children)) {
+  for (const child of Object.values(trie.children)) {
     const subStats = statistics(child);
     stats.wordCount += subStats.wordCount;
     stats.totalLetters += subStats.totalLetters;

@@ -190,7 +190,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../styles/layout.scss";
+@import "@/styles/layout.scss";
+@import "@/styles/fonts.scss";
 
 .Host {
   @include layout-center;
@@ -198,6 +199,7 @@ export default {
 }
 
 .Form {
+  @include fonts-nytimes;
 }
 
 .Input {

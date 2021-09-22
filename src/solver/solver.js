@@ -1,5 +1,5 @@
-import * as trie from "./trieUtil.js";
-import dictionary from "../assets/dictionary.json";
+import * as trie from "@/solver/trieUtil.js";
+import dictionary from "@/assets/dictionary.json";
 
 /**
  * Given the edges of a letter boxed puzzle, create a predicate which can be
