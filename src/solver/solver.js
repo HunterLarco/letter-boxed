@@ -36,7 +36,7 @@ function createPruningPredicate(edges) {
 
 export const LetterBoxedMode = {
   MinLetters: Symbol("MinLetters"),
-  MinWords: Symbol("MinWords"),
+  TwoWords: Symbol("TwoWords"),
 };
 
 /**
@@ -52,11 +52,6 @@ export const LetterBoxedMode = {
  */
 export function letterBoxed(obj) {
   const { edges = [], mode = LetterBoxedMode.MinLetters } = obj;
-
-  if (mode == LetterBoxedMode.MinWords) {
-    console.error(`Unsupported mode: ${mode.toString()}`);
-    return [];
-  }
 
   // To solve a Letter Boxed puzzle we...
   //
@@ -85,6 +80,7 @@ export function letterBoxed(obj) {
   // magnitude.
 
   console.log("Before pruning", trie.statistics(dictionary));
+  const letters = new Set(edges.join("").split(""));
   const domain = trie.prune(dictionary, createPruningPredicate(edges));
   console.log("After pruning", trie.statistics(domain));
 
@@ -171,6 +167,10 @@ export function letterBoxed(obj) {
       // is a duplicate of the current branch however the trie-node is reset to
       // the beginning of a new word using the last letter of the current word.
       if (branch.node.isEnd) {
+        if (mode == LetterBoxedMode.TwoWords && branch.path.length == 2) {
+          continue;
+        }
+
         const lastWord = branch.path[branch.path.length - 1];
         const lastLetter = lastWord[lastWord.length - 1];
         const node = domain.children[lastLetter];
@@ -185,11 +185,7 @@ export function letterBoxed(obj) {
           // Starting a new word always requires re-using at least one letter,
           // so this must always be stashed so that processing occurs once more
           // optimal branches have been exhausted.
-          if (mode == LetterBoxedMode.MinWords) {
-            iteration.wordStash.push(nextBranch);
-          } else {
-            iteration.charStash.push(nextBranch);
-          }
+          iteration.charStash.push(nextBranch);
         }
       }
     }

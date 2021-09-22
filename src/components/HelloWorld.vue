@@ -52,15 +52,22 @@
       </div>
 
       <div class="Solutions">
-        <template v-if="solutions.minWords.length">
-          <div><br /><b>Min Words:</b></div>
+        <template v-if="solutions.twoWords.length">
+          <div><br /><b>Two Words:</b></div>
 
-          <div class="Solution" v-for="solution of solutions.minWords">
+          <div class="Solution" v-for="solution of solutions.twoWords">
             <div class="Word" v-for="word of solution">
               {{ word }}
             </div>
             ({{ solution.join("").length }})
           </div>
+        </template>
+
+        <template
+          v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
+        >
+          <div><br /><b>Two Words:</b></div>
+          <div class="Solution">There are no two word solutions.</div>
         </template>
 
         <template v-if="solutions.minLetters.length">
@@ -88,7 +95,7 @@ export default {
     return {
       solutions: {
         minLetters: [],
-        minWords: [],
+        twoWords: [],
       },
 
       edges: {
@@ -134,14 +141,14 @@ export default {
     },
 
     submit_() {
-      this.solutions.minWords = letterBoxed({
+      this.solutions.twoWords = letterBoxed({
         edges: [
           this.edges.top,
           this.edges.right,
           this.edges.bottom,
           this.edges.left,
         ],
-        mode: LetterBoxedMode.MinWords,
+        mode: LetterBoxedMode.TwoWords,
       });
 
       this.solutions.minLetters = letterBoxed({
