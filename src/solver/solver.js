@@ -1,36 +1,37 @@
+import * as trie from "./trieUtil.js";
 import dictionary from "../assets/dictionary.json";
 
 /**
- * Given a Trie Tree, prunes it to only include words using the given letters.
+ * Given the edges of a letter boxed puzzle, create a predicate which can be
+ * used to prune the dictionary so that it only contains valid words within the
+ * puzzle.
  *
- * @param trie A valid Trie Tree.
- * @param {Set} letters A set of letters.
+ * @param {Array<string>} edges The edges of the puzzle. Note that any number of
+ *     edges are allowed and they do not need to be uniform.
  *
- * @return A copy of the original Trie Tree only including words using the given
- *     letters.
+ * @return {Function} The predicate for use with `prune`.
  */
-function prune(trie, letters) {
-  const root = {
-    children: {},
-    isEnd: trie.isEnd,
-  };
+function createPruningPredicate(edges) {
+  // Create a mapping of each letter in the puzzle to the set of letters
+  // accessible from that letter.
+  const letters = new Map();
 
-  for (const [letter, child] of Object.entries(trie.children)) {
-    if (!letters.has(letter)) {
-      // If the child branch would use an invalid letter, prune it.
-      continue;
+  for (let i = 0; i < edges.length; ++i) {
+    for (const letter of edges[i]) {
+      const accessible = new Set();
+      for (let j = 0; j < edges.length; ++j) {
+        if (j != i) {
+          [...edges[j]].forEach((l) => accessible.add(l));
+        }
+      }
+      letters.set(letter, accessible);
     }
-
-    const subtree = prune(child, letters);
-    if (Object.keys(subtree.children).length == 0 && !subtree.isEnd) {
-      // If the subtree contains no words, prune it.
-      continue;
-    }
-
-    root.children[letter] = subtree;
   }
 
-  return root;
+  return (letter, previousLetter) =>
+    letters.has(letter) &&
+    (previousLetter == null ||
+      (letters.has(previousLetter) && letters.get(previousLetter).has(letter)));
 }
 
 export const LetterBoxedMode = {
@@ -51,6 +52,11 @@ export const LetterBoxedMode = {
  */
 export function letterBoxed(obj) {
   const { edges = [], mode = LetterBoxedMode.MinLetters } = obj;
+
+  if (mode == LetterBoxedMode.MinWords) {
+    console.error(`Unsupported mode: ${mode.toString()}`);
+    return [];
+  }
 
   // To solve a Letter Boxed puzzle we...
   //
@@ -78,9 +84,9 @@ export function letterBoxed(obj) {
   // yield the right solution. The reduction of the search space is orders of
   // magnitude.
 
-  // Identify the possible letters and prune the dictionary accordingly.
-  const letters = new Set(edges.join("").split(""));
-  const domain = prune(dictionary, letters);
+  console.log("Before pruning", trie.statistics(dictionary));
+  const domain = trie.prune(dictionary, createPruningPredicate(edges));
+  console.log("After pruning", trie.statistics(domain));
 
   // Stores the branches we're currently iterating over, will be next, and are
   // stashed for later.
@@ -209,4 +215,6 @@ export function letterBoxed(obj) {
       iteration.wordStash = [];
     }
   }
+
+  return [];
 }
