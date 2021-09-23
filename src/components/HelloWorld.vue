@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.Host">
     <div :class="$style.Frame">
-      <div :class="$style.Game">
+      <div>
         <div :class="$style.InputBar">
           <input
             :class="$style.LettersInput"
@@ -35,33 +35,17 @@
         </div>
       </div>
 
-      <div :class="$style.Solutions">
-        <template v-if="solutions.twoWords.length">
-          <div><b>Two Words:</b></div>
-
-          <Solution
-            :words="solution"
-            :key="solution.join('')"
-            v-for="solution of solutions.twoWords"
-          />
-        </template>
-
-        <template
-          v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
-        >
-          <div><b>Two Words:</b></div>
-          <div :class="$style.Solution">There are no two word solutions.</div>
-        </template>
-
-        <template v-if="solutions.minLetters.length">
-          <div><br /><b>Min Letters:</b></div>
-
-          <Solution
-            :words="solution"
-            :key="solution.join('')"
-            v-for="solution of solutions.minLetters"
-          />
-        </template>
+      <div :class="$style.Solutions" v-if="solutions.letters">
+        <Solutions
+          :class="$style.Solution"
+          title="Smallest Two Word Solutions"
+          :solutions="solutions.twoWords"
+        />
+        <Solutions
+          :class="$style.Solution"
+          title="Smallest Overall Solutions"
+          :solutions="solutions.minLetters"
+        />
       </div>
     </div>
   </div>
@@ -69,12 +53,12 @@
 
 <script>
 import LetterBoxed from "@/components/LetterBoxed";
-import Solution from "@/components/Solution";
+import Solutions from "@/components/Solutions";
 import { letterBoxed, LetterBoxedMode } from "../solver/solver.js";
 
 export default {
   name: "HelloWorld",
-  components: { LetterBoxed, Solution },
+  components: { LetterBoxed, Solutions },
 
   data() {
     return {
@@ -105,7 +89,7 @@ export default {
 
     clear_() {
       this.letters_ = "";
-      this.solutions.state = null;
+      this.solutions.letters = null;
       this.solutions.twoWords = [];
       this.solutions.minLetters = [];
     },
@@ -116,10 +100,10 @@ export default {
       }
 
       const edges = [
-        this.letters_.slice(0, 3),
-        this.letters_.slice(3, 6),
-        this.letters_.slice(6, 9),
-        this.letters_.slice(9, 12),
+        this.letters_.toLowerCase().slice(0, 3),
+        this.letters_.toLowerCase().slice(3, 6),
+        this.letters_.toLowerCase().slice(6, 9),
+        this.letters_.toLowerCase().slice(9, 12),
       ];
 
       this.solutions.letters = this.letters_;
@@ -236,5 +220,12 @@ export default {
 }
 
 .Solutions {
+  padding-top: 130px;
+}
+
+.Solution {
+  & + .Solution {
+    padding-top: 30px;
+  }
 }
 </style>

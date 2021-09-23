@@ -53,6 +53,8 @@ export const LetterBoxedMode = {
 export function letterBoxed(obj) {
   const { edges = [], mode = LetterBoxedMode.MinLetters } = obj;
 
+  console.log("Solving letter boxed", obj);
+
   // To solve a Letter Boxed puzzle we...
   //
   // 1. Construct a Trie Tree from the dictionary.
