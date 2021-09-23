@@ -39,12 +39,11 @@
         <template v-if="solutions.twoWords.length">
           <div><b>Two Words:</b></div>
 
-          <div :class="$style.Solution" v-for="solution of solutions.twoWords">
-            <div :class="$style.Word" v-for="word of solution">
-              {{ word }}
-            </div>
-            ({{ solution.join("").length }})
-          </div>
+          <Solution
+            :words="solution"
+            :key="solution.join('')"
+            v-for="solution of solutions.twoWords"
+          />
         </template>
 
         <template
@@ -57,15 +56,11 @@
         <template v-if="solutions.minLetters.length">
           <div><br /><b>Min Letters:</b></div>
 
-          <div
-            :class="$style.Solution"
+          <Solution
+            :words="solution"
+            :key="solution.join('')"
             v-for="solution of solutions.minLetters"
-          >
-            <div :class="$style.Word" v-for="word of solution">
-              {{ word }}
-            </div>
-            ({{ solution.join("").length }})
-          </div>
+          />
         </template>
       </div>
     </div>
@@ -74,11 +69,12 @@
 
 <script>
 import LetterBoxed from "@/components/LetterBoxed";
+import Solution from "@/components/Solution";
 import { letterBoxed, LetterBoxedMode } from "../solver/solver.js";
 
 export default {
   name: "HelloWorld",
-  components: { LetterBoxed },
+  components: { LetterBoxed, Solution },
 
   data() {
     return {
@@ -240,17 +236,5 @@ export default {
 }
 
 .Solutions {
-}
-
-.Solution {
-}
-
-.Word {
-  display: inline-block;
-
-  & + .Word::before {
-    content: "\2192";
-    padding: 0 4px;
-  }
 }
 </style>
