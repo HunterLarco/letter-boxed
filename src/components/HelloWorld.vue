@@ -1,6 +1,7 @@
 <template>
   <div :class="$style.Host">
-    <LetterBoxed :letters="'asdf'" />
+    <input v-model="letters_" />
+    <LetterBoxed :letters="letters_" />
 
     <!--
     <div class="Form">
@@ -99,6 +100,7 @@ export default {
 
   data() {
     return {
+      letters_: '',
       solutions: {
         minLetters: [],
         twoWords: [],
