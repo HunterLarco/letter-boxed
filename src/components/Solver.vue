@@ -13,7 +13,7 @@
           />
         </div>
         <div>
-          <LetterBoxed :letters="letters_" />
+          <LetterBoxed :letters="letters_" :draw="selectedSolution_" />
         </div>
         <div :class="$style.ButtonBar">
           <div
@@ -41,12 +41,16 @@
           title="Smallest Two Word Solutions"
           :solutions="solutions.twoWords.results"
           :loading="solutions.twoWords.loading"
+          @hoverenter="selectedSolution_ = $event.solution"
+          @hoverexit="selectedSolution_ = null"
         />
         <Solutions
           :class="$style.Solution"
           title="Smallest Overall Solutions"
           :solutions="solutions.minLetters.results"
           :loading="solutions.minLetters.loading"
+          @hoverenter="selectedSolution_ = $event.solution"
+          @hoverexit="selectedSolution_ = null"
         />
       </div>
     </div>
@@ -65,7 +69,7 @@ export default {
   data() {
     return {
       letters_: "",
-
+      selectedSolution_: null,
       solutions: {
         letters: null,
         twoWords: {

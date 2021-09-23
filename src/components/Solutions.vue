@@ -11,6 +11,8 @@
           :words="solution"
           :key="solution.join('')"
           v-for="solution of solutions"
+          @mouseover.native="hoverEnter_(solution)"
+          @mouseleave.native="hoverExit_(solution)"
         />
       </template>
       <template v-else>
@@ -41,6 +43,16 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+  },
+
+  methods: {
+    hoverEnter_(solution) {
+      this.$emit('hoverenter', { solution });
+    },
+
+    hoverExit_(solution) {
+      this.$emit('hoverexit', { solution });
     },
   },
 };
