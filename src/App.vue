@@ -1,26 +1,33 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <Solver />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import Solver from "@/components/Solver.vue";
 
 export default {
   name: "App",
-  components: {
-    HelloWorld,
-  },
+  components: { Solver },
 };
 </script>
 
 <style lang="scss">
+@import "./styles/layout.scss";
+
 #app {
+  @include layout-fill;
+
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+
+  background: #f8aa9e;
+}
+
+* {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  padding: 0;
 }
 </style>
