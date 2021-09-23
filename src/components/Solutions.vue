@@ -2,15 +2,20 @@
   <div :class="$style.Host">
     <div :class="$style.Title">{{ title }}</div>
 
-    <template v-if="solutions.length">
-      <Solution
-        :words="solution"
-        :key="solution.join('')"
-        v-for="solution of solutions"
-      />
+    <template v-if="loading">
+      <div :class="$style.Text">Solving...</div>
     </template>
     <template v-else>
-      <div :class="$style.Text">No solutions found</div>
+      <template v-if="solutions.length">
+        <Solution
+          :words="solution"
+          :key="solution.join('')"
+          v-for="solution of solutions"
+        />
+      </template>
+      <template v-else>
+        <div :class="$style.Text">No solutions found</div>
+      </template>
     </template>
   </div>
 </template>
@@ -31,6 +36,11 @@ export default {
     solutions: {
       type: Array,
       required: true,
+    },
+
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
 };

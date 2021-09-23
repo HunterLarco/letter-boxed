@@ -39,12 +39,14 @@
         <Solutions
           :class="$style.Solution"
           title="Smallest Two Word Solutions"
-          :solutions="solutions.twoWords"
+          :solutions="solutions.twoWords.results"
+          :loading="solutions.twoWords.loading"
         />
         <Solutions
           :class="$style.Solution"
           title="Smallest Overall Solutions"
-          :solutions="solutions.minLetters"
+          :solutions="solutions.minLetters.results"
+          :loading="solutions.minLetters.loading"
         />
       </div>
     </div>
@@ -66,8 +68,14 @@ export default {
 
       solutions: {
         letters: null,
-        minLetters: [],
-        twoWords: [],
+        twoWords: {
+          loading: false,
+          results: [],
+        },
+        minLetters: {
+          loading: false,
+          results: [],
+        },
       },
     };
   },
@@ -90,8 +98,10 @@ export default {
     clear_() {
       this.letters_ = "";
       this.solutions.letters = null;
-      this.solutions.twoWords = [];
-      this.solutions.minLetters = [];
+      this.solutions.twoWords.loading = false;
+      this.solutions.twoWords.results = [];
+      this.solutions.minLetters.loading = false;
+      this.solutions.minLetters.results = [];
     },
 
     submit_() {
@@ -107,18 +117,24 @@ export default {
       ];
 
       this.solutions.letters = this.letters_;
+      this.solutions.twoWords.loading = true;
+      this.solutions.minLetters.loading = true;
 
-      this.$nextTick(() => {
-        this.solutions.twoWords = letterBoxed({
+      setTimeout(() => {
+        this.solutions.twoWords.loading = false;
+        this.solutions.twoWords.results = letterBoxed({
           edges,
           mode: LetterBoxedMode.TwoWords,
         });
 
-        this.solutions.minLetters = letterBoxed({
-          edges,
-          mode: LetterBoxedMode.MinLetters,
-        });
-      });
+        setTimeout(() => {
+          this.solutions.minLetters.loading = false;
+          this.solutions.minLetters.results = letterBoxed({
+            edges,
+            mode: LetterBoxedMode.MinLetters,
+          });
+        }, 0);
+      }, 0);
     },
   },
 

@@ -1,5 +1,5 @@
 <template>
-  <Solver/>
+  <Solver />
 </template>
 
 <script>
