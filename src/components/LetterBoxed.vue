@@ -85,6 +85,7 @@ export default {
   @include fonts-nytimes;
 
   padding: 60px;
+  user-select: none;
 }
 
 .Box {

@@ -2,97 +2,67 @@
   <div :class="$style.Host">
     <div>
       <div :class="$style.InputBar">
-        <input :class="$style.LettersInput" v-model="letters_" maxlength="12" />
+        <input
+          :class="$style.LettersInput"
+          v-model="letters_"
+          maxlength="12"
+          @keydown="enforcePattern_($event, /^[a-zA-Z]*$/)"
+          @keypress.enter="submit_"
+        />
       </div>
       <div>
         <LetterBoxed :letters="letters_" />
       </div>
-    </div>
-
-    <!--
-    <div class="Form">
-      <input
-        class="Input"
-        maxlength="3"
-        placeholder="Top"
-        ref="top"
-        v-model="edges.top"
-        @keydown="enforcePattern_($event, /^[a-zA-Z]*$/)"
-        @keyup="moveFocus_($event, 'right')"
-      />
-
-      <input
-        class="Input"
-        maxlength="3"
-        placeholder="Right"
-        ref="right"
-        v-model="edges.right"
-        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
-        @keyup="moveFocus_($event, 'bottom')"
-      />
-
-      <input
-        class="Input"
-        maxlength="3"
-        placeholder="Bottom"
-        ref="bottom"
-        v-model="edges.bottom"
-        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
-        @keyup="moveFocus_($event, 'left')"
-      />
-
-      <input
-        class="Input"
-        maxlength="3"
-        placeholder="Left"
-        ref="left"
-        v-model="edges.left"
-        @keypress="enforcePattern_($event, /^[a-zA-Z]*$/)"
-        @keyup="moveFocus_($event, 'submit')"
-      />
-
-      <div
-        :class="submitEnabled_ ? 'Button' : 'Button_Disabled'"
-        ref="submit"
-        tabindex="0"
-        @click="submit_"
-        @keypress.enter="submit_"
-      >
-        Solve
-      </div>
-
-      <div class="Solutions">
-        <template v-if="solutions.twoWords.length">
-          <div><br /><b>Two Words:</b></div>
-
-          <div class="Solution" v-for="solution of solutions.twoWords">
-            <div class="Word" v-for="word of solution">
-              {{ word }}
-            </div>
-            ({{ solution.join("").length }})
-          </div>
-        </template>
-
-        <template
-          v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
+      <div :class="$style.ButtonBar">
+        <div
+          :class="clearEnabled_ ? $style.Button : $style.Button_Disabled"
+          tabindex="0"
+          @click="clear_"
+          @keypress.enter="clear_"
         >
-          <div><br /><b>Two Words:</b></div>
-          <div class="Solution">There are no two word solutions.</div>
-        </template>
-
-        <template v-if="solutions.minLetters.length">
-          <div><br /><b>Min Letters:</b></div>
-
-          <div class="Solution" v-for="solution of solutions.minLetters">
-            <div class="Word" v-for="word of solution">
-              {{ word }}
-            </div>
-            ({{ solution.join("").length }})
-          </div>
-        </template>
+          Clear
+        </div>
+        <div
+          :class="submitEnabled_ ? $style.Button : $style.Button_Disabled"
+          tabindex="0"
+          @keypress.enter="submit_"
+          @click="submit_"
+        >
+          Solve
+        </div>
       </div>
     </div>
-    -->
+
+    <div class="Solutions">
+      <template v-if="solutions.twoWords.length">
+        <div><br /><b>Two Words:</b></div>
+
+        <div class="Solution" v-for="solution of solutions.twoWords">
+          <div class="Word" v-for="word of solution">
+            {{ word }}
+          </div>
+          ({{ solution.join("").length }})
+        </div>
+      </template>
+
+      <template
+        v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
+      >
+        <div><br /><b>Two Words:</b></div>
+        <div class="Solution">There are no two word solutions.</div>
+      </template>
+
+      <template v-if="solutions.minLetters.length">
+        <div><br /><b>Min Letters:</b></div>
+
+        <div class="Solution" v-for="solution of solutions.minLetters">
+          <div class="Word" v-for="word of solution">
+            {{ word }}
+          </div>
+          ({{ solution.join("").length }})
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -107,16 +77,11 @@ export default {
   data() {
     return {
       letters_: "",
+
       solutions: {
+        state: null,
         minLetters: [],
         twoWords: [],
-      },
-
-      edges: {
-        top: "",
-        right: "",
-        bottom: "",
-        left: "",
       },
     };
   },
@@ -136,68 +101,50 @@ export default {
       return true;
     },
 
-    moveFocus_(event, ref) {
-      if (event.key.length > 1) {
-        // Don't move focus when modifier keys are pressed. Only during
-        // character entry.
-        return;
-      }
-
-      if (this.submitEnabled_) {
-        this.$refs.submit.focus();
-        return;
-      }
-
-      const maxLength = parseInt(event.target.getAttribute("maxlength"));
-      if (event.target.value.length >= maxLength) {
-        this.$refs[ref].focus();
-      }
+    clear_() {
+      this.letters_ = "";
+      this.solutions.state = null;
+      this.solutions.twoWords = [];
+      this.solutions.minLetters = [];
     },
 
     submit_() {
-      this.solutions.twoWords = letterBoxed({
-        edges: [
-          this.edges.top,
-          this.edges.right,
-          this.edges.bottom,
-          this.edges.left,
-        ],
-        mode: LetterBoxedMode.TwoWords,
-      });
+      if (!this.submitEnabled_) {
+        return;
+      }
 
-      this.solutions.minLetters = letterBoxed({
-        edges: [
-          this.edges.top,
-          this.edges.right,
-          this.edges.bottom,
-          this.edges.left,
-        ],
-        mode: LetterBoxedMode.MinLetters,
+      const edges = [
+        this.letters_.slice(0, 3),
+        this.letters_.slice(3, 6),
+        this.letters_.slice(6, 9),
+        this.letters_.slice(9, 12),
+      ];
+
+      this.solutions.state = "solving";
+
+      this.$nextTick(() => {
+        this.solutions.twoWords = letterBoxed({
+          edges,
+          mode: LetterBoxedMode.TwoWords,
+        });
+
+        this.solutions.minLetters = letterBoxed({
+          edges,
+          mode: LetterBoxedMode.MinLetters,
+        });
+
+        this.solutions.state = "solved";
       });
     },
   },
 
   computed: {
-    submitEnabled_() {
-      const topMaxLength = this.$refs.top
-        ? this.$refs.top.getAttribute("maxlength")
-        : undefined;
-      const rightMaxLength = this.$refs.right
-        ? this.$refs.right.getAttribute("maxlength")
-        : undefined;
-      const bottomMaxLength = this.$refs.bottom
-        ? this.$refs.bottom.getAttribute("maxlength")
-        : undefined;
-      const leftMaxLength = this.$refs.left
-        ? this.$refs.left.getAttribute("maxlength")
-        : undefined;
+    clearEnabled_() {
+      return this.letters_.length > 0;
+    },
 
-      return (
-        this.edges.top.length == topMaxLength &&
-        this.edges.right.length == rightMaxLength &&
-        this.edges.bottom.length == bottomMaxLength &&
-        this.edges.left.length == leftMaxLength
-      );
+    submitEnabled_() {
+      return this.letters_.length == 12 && this.solutions.state == null;
     },
   },
 };
@@ -210,10 +157,6 @@ export default {
 .Host {
   @include layout-center;
   @include layout-fill;
-}
-
-.Form {
-  @include fonts-nytimes;
 }
 
 .InputBar {
@@ -237,39 +180,47 @@ export default {
   width: 240px;
 }
 
-.Input {
-  background: rgba(#fff, 0.25);
-  border-radius: 0;
-  border: none;
-  font-size: 20px;
-  outline: none;
-  padding: 10px;
-  text-transform: uppercase;
-  width: 100px;
-
-  &:focus {
-    background: rgba(#fff, 0.5);
-  }
+.ButtonBar {
+  padding-top: 10px;
+  text-align: center;
 }
 
 .Button {
+  @include fonts-nytimes;
+
+  border-radius: 40px;
+  border: 1px solid rgba(51, 51, 51, 0.5);
+  color: #333;
   cursor: pointer;
   display: inline-block;
-  font-size: 20px;
-  padding: 10px;
-  background: blue;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 12px 20px;
+  user-select: none;
 
   &:focus {
-    background: yellow;
     outline: none;
+    border: 1px solid #000;
+  }
+
+  &:hover {
+    background-color: #eaa195;
+  }
+
+  & + .Button {
+    margin-left: 20px;
   }
 }
 
 .Button_Disabled {
   @extend .Button;
 
-  background: gray;
   cursor: not-allowed;
+  opacity: 0.5;
+
+  &:focus {
+    border: 1px solid rgba(51, 51, 51, 0.5);
+  }
 }
 
 .Solutions {
