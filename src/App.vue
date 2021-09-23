@@ -23,7 +23,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background: #F8AA9E;
+  background: #f8aa9e;
 }
 
 * {

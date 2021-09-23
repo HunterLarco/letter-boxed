@@ -1,5 +1,8 @@
 <template>
-  <div class="Host">
+  <div :class="$style.Host">
+    <LetterBoxed />
+
+    <!--
     <div class="Form">
       <input
         class="Input"
@@ -82,14 +85,17 @@
         </template>
       </div>
     </div>
+    -->
   </div>
 </template>
 
 <script>
+import LetterBoxed from "@/components/LetterBoxed";
 import { letterBoxed, LetterBoxedMode } from "../solver/solver.js";
 
 export default {
   name: "HelloWorld",
+  components: { LetterBoxed },
 
   data() {
     return {
@@ -189,7 +195,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style module lang="scss">
 @import "@/styles/layout.scss";
 @import "@/styles/fonts.scss";
 
