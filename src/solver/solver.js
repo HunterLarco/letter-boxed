@@ -92,7 +92,6 @@ export function letterBoxed(obj) {
     current: [],
     next: [],
     charStash: [],
-    wordStash: [],
   };
 
   // Bootstrap the search by adding each letter in the puzzle to the currently
@@ -201,16 +200,11 @@ export function letterBoxed(obj) {
       // If branches are slated for immediate iteration, progress them next.
       iteration.current = iteration.next;
       iteration.next = [];
-    } else if (iteration.charStash.length > 0) {
+    } else {
       // If no branches are slated for immediate iteration, we must have
       // exhausted all optimal branches and should resume any stashed branches.
       iteration.current = iteration.charStash;
       iteration.charStash = [];
-    } else {
-      // If no branches are slated for immediate iteration, we must have
-      // exhausted all optimal branches and should resume any stashed branches.
-      iteration.current = iteration.wordStash;
-      iteration.wordStash = [];
     }
   }
 
