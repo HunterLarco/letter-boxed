@@ -1,15 +1,13 @@
 <template>
-  <HelloWorld />
+  <Solver/>
 </template>
 
 <script>
-import HelloWorld from "@/components/HelloWorld.vue";
+import Solver from "@/components/Solver.vue";
 
 export default {
   name: "App",
-  components: {
-    HelloWorld,
-  },
+  components: { Solver },
 };
 </script>
 
