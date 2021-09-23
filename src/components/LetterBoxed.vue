@@ -85,22 +85,22 @@ export default {
   methods: {
     position_(letter) {
       const positions = [
-          { x: 0.18, y: 0 },
-          { x: 0.50, y: 0 },
-          { x: 0.82, y: 0 },
-          { x: 1, y: 0.18 },
-          { x: 1, y: 0.50 },
-          { x: 1, y: 0.82 },
-          { x: 0.82, y: 1 },
-          { x: 0.50, y: 1 },
-          { x: 0.18, y: 1 },
-          { x: 0, y: 0.82 },
-          { x: 0, y: 0.50 },
-          { x: 0, y: 0.18 },
-        ];
+        { x: 0.18, y: 0 },
+        { x: 0.5, y: 0 },
+        { x: 0.82, y: 0 },
+        { x: 1, y: 0.18 },
+        { x: 1, y: 0.5 },
+        { x: 1, y: 0.82 },
+        { x: 0.82, y: 1 },
+        { x: 0.5, y: 1 },
+        { x: 0.18, y: 1 },
+        { x: 0, y: 0.82 },
+        { x: 0, y: 0.5 },
+        { x: 0, y: 0.18 },
+      ];
       const index = this.letters.indexOf(letter);
       if (index > positions.length) {
-        throw 'Invalid letter position';
+        throw "Invalid letter position";
       }
       return positions[index];
     },
@@ -115,7 +115,7 @@ export default {
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, width, height);
 
       if (!this.draw) {
@@ -123,13 +123,13 @@ export default {
       }
 
       ctx.lineWidth = 4 * window.devicePixelRatio;
-      ctx.strokeStyle = '#FDECE9';
+      ctx.strokeStyle = "#FDECE9";
 
       ctx.beginPath();
       let firstLetter = true;
       for (const word of this.draw) {
         for (const letter of word) {
-          const {x, y} = this.position_(letter);
+          const { x, y } = this.position_(letter);
           if (firstLetter) {
             firstLetter = false;
             ctx.moveTo(x * width, y * height);
@@ -139,7 +139,7 @@ export default {
         }
       }
       ctx.stroke();
-    }
+    },
   },
 };
 </script>

@@ -1,8 +1,8 @@
 import { reactive, readonly } from "vue";
 
-import * as dictionary from '@/solver/dictionary';
+import * as dictionary from "@/solver/dictionary";
 
-function createStore({ state, actions, mutations }) {
+function createStore({ state, actions }) {
   const reactiveState = reactive(state);
   const store = { state: readonly(reactiveState) };
 

@@ -1,6 +1,12 @@
 <template>
   <div :class="$style.Host">
-    <VuePopper :class="$style.Word" :key="word" v-for="word of words" hover @open:popper="define_(word)">
+    <VuePopper
+      :class="$style.Word"
+      :key="word"
+      v-for="word of words"
+      hover
+      @open:popper="define_(word)"
+    >
       <div :class="$style.WordText">{{ word }}</div>
       <template #content>
         <Definition :class="$style.Definition" :word="word" />
@@ -16,7 +22,7 @@ import VuePopper from "vue3-popper";
 
 import Definition from "@/components/Definition";
 
-import Store from '@/store';
+import Store from "@/store";
 
 export default {
   name: "Solution",
@@ -32,7 +38,7 @@ export default {
   methods: {
     define_(word) {
       Store.define(word);
-    }
+    },
   },
 };
 </script>

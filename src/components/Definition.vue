@@ -4,7 +4,9 @@
       <template v-if="def.shortdef.length">
         <div :class="$style.Title">{{ def.fl }}</div>
         <ol :class="$style.SectionList">
-          <li :key="shortdef" v-for="shortdef of def.shortdef">{{ shortdef }}</li>
+          <li :key="shortdef" v-for="shortdef of def.shortdef">
+            {{ shortdef }}
+          </li>
         </ol>
       </template>
 
@@ -19,7 +21,7 @@
 </template>
 
 <script>
-import Store from '@/store';
+import Store from "@/store";
 
 export default {
   name: "Definition",
