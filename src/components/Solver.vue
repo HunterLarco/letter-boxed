@@ -96,6 +96,10 @@ export default {
     },
 
     clear_() {
+      if (!this.clearEnabled_) {
+        return;
+      }
+
       this.letters_ = "";
       this.solutions.letters = null;
       this.solutions.twoWords.loading = false;
@@ -140,7 +144,7 @@ export default {
 
   computed: {
     clearEnabled_() {
-      return this.letters_.length > 0;
+      return this.letters_.length > 0 || this.solutions.letters;
     },
 
     submitEnabled_() {
