@@ -3,18 +3,20 @@
     <div :class="$style.Box">
       <canvas :class="$style.Canvas" ref="canvas" />
 
-      <div :class="$style.TopDot" style="left: 18%" />
-      <div :class="$style.TopDot" style="left: 50%" />
-      <div :class="$style.TopDot" style="left: 82%" />
-      <div :class="$style.RightDot" style="top: 18%" />
-      <div :class="$style.RightDot" style="top: 50%" />
-      <div :class="$style.RightDot" style="top: 82%" />
-      <div :class="$style.BottomDot" style="left: 18%" />
-      <div :class="$style.BottomDot" style="left: 50%" />
-      <div :class="$style.BottomDot" style="left: 82%" />
-      <div :class="$style.LeftDot" style="top: 18%" />
-      <div :class="$style.LeftDot" style="top: 50%" />
-      <div :class="$style.LeftDot" style="top: 82%" />
+      <div :class="this.draw ? $style.Dot_Filled : null">
+        <div :class="$style.TopDot" style="left: 18%" />
+        <div :class="$style.TopDot" style="left: 50%" />
+        <div :class="$style.TopDot" style="left: 82%" />
+        <div :class="$style.RightDot" style="top: 18%" />
+        <div :class="$style.RightDot" style="top: 50%" />
+        <div :class="$style.RightDot" style="top: 82%" />
+        <div :class="$style.BottomDot" style="left: 18%" />
+        <div :class="$style.BottomDot" style="left: 50%" />
+        <div :class="$style.BottomDot" style="left: 82%" />
+        <div :class="$style.LeftDot" style="top: 18%" />
+        <div :class="$style.LeftDot" style="top: 50%" />
+        <div :class="$style.LeftDot" style="top: 82%" />
+      </div>
 
       <div :class="$style.TopLetter" style="left: 18%">
         {{ displayLetters_[0] }}
@@ -207,6 +209,15 @@ export default {
 
   left: -1.5px;
   transform: translate(-50%, -50%);
+}
+
+.Dot_Filled {
+  .TopDot,
+  .RightDot,
+  .BottomDot,
+  .LeftDot {
+    background: #f8aa9e;
+  }
 }
 
 ._Letter {
