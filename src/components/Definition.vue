@@ -1,5 +1,9 @@
 <template>
   <div :class="$style.Host" v-if="definitions_.length">
+    <div :class="$style.Word">
+      <span :class="$style.Def">def.</span> {{ word }}
+    </div>
+
     <div :class="$style.Section" :key="def.meta.id" v-for="def of definitions_">
       <template v-if="def.shortdef.length">
         <div :class="$style.Title">{{ def.fl }}</div>
@@ -53,6 +57,21 @@ export default {
 
   font-weight: 400;
   padding: 20px;
+}
+
+.Word {
+  font-weight: 600;
+  padding-bottom: 20px;
+}
+
+.Def {
+  @include fonts-script;
+
+  display: inline-block;
+  font-size: 30px;
+  font-weight: 400;
+  margin-right: 2px;
+  opacity: 0.5;
 }
 
 .Title {

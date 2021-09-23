@@ -3,3 +3,9 @@
 @mixin fonts-nytimes {
   font-family: 'Libre Franklin', sans-serif;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Caramel&display=swap');
+
+@mixin fonts-script {
+  font-family: 'Caramel', cursive;
+}

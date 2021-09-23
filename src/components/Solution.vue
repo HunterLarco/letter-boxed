@@ -1,17 +1,17 @@
 <template>
   <div :class="$style.Host">
-    <VuePopper
-      :class="$style.Word"
-      :key="word"
-      v-for="word of words"
-      hover
-      @open:popper="define_(word)"
-    >
-      <div :class="$style.WordText">{{ word }}</div>
-      <template #content>
-        <Definition :class="$style.Definition" :word="word" />
-      </template>
-    </VuePopper>
+    <div :class="$style.Word" :key="word" v-for="word of words">
+      <VuePopper
+        hover
+        @open:popper="define_(word)"
+        style="display: inline-block"
+      >
+        <div :class="$style.WordText">{{ word }}</div>
+        <template #content>
+          <Definition :class="$style.Definition" :word="word" />
+        </template>
+      </VuePopper>
+    </div>
 
     <div :class="$style.Length">({{ words.join("").length }})</div>
   </div>
@@ -66,6 +66,7 @@ export default {
 
 .WordText {
   cursor: pointer;
+  display: inline-block;
 }
 
 .Length {
