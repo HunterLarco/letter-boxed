@@ -14,18 +14,18 @@
       <div :class="$style.BottomDot" style="left: 50%" />
       <div :class="$style.BottomDot" style="left: 82%" />
 
-      <div :class="$style.TopLetter" style="left: 18%">K</div>
-      <div :class="$style.TopLetter" style="left: 50%">C</div>
-      <div :class="$style.TopLetter" style="left: 82%">N</div>
-      <div :class="$style.RightLetter" style="top: 18%">K</div>
-      <div :class="$style.RightLetter" style="top: 50%">C</div>
-      <div :class="$style.RightLetter" style="top: 82%">N</div>
-      <div :class="$style.BottomLetter" style="left: 18%">K</div>
-      <div :class="$style.BottomLetter" style="left: 50%">C</div>
-      <div :class="$style.BottomLetter" style="left: 82%">N</div>
-      <div :class="$style.LeftLetter" style="top: 18%">K</div>
-      <div :class="$style.LeftLetter" style="top: 50%">C</div>
-      <div :class="$style.LeftLetter" style="top: 82%">N</div>
+        <div :class="$style.TopLetter" style="left: 18%">{{ displayLetters_[0] }}</div>
+        <div :class="$style.TopLetter" style="left: 50%">{{ displayLetters_[1] }}</div>
+        <div :class="$style.TopLetter" style="left: 82%">{{ displayLetters_[2] }}</div>
+        <div :class="$style.RightLetter" style="top: 18%">{{ displayLetters_[3] }}</div>
+        <div :class="$style.RightLetter" style="top: 50%">{{ displayLetters_[4] }}</div>
+        <div :class="$style.RightLetter" style="top: 82%">{{ displayLetters_[5] }}</div>
+        <div :class="$style.BottomLetter" style="left: 18%">{{ displayLetters_[6] }}</div>
+        <div :class="$style.BottomLetter" style="left: 50%">{{ displayLetters_[7] }}</div>
+        <div :class="$style.BottomLetter" style="left: 82%">{{ displayLetters_[8] }}</div>
+        <div :class="$style.LeftLetter" style="top: 18%">{{ displayLetters_[9] }}</div>
+        <div :class="$style.LeftLetter" style="top: 50%">{{ displayLetters_[10] }}</div>
+        <div :class="$style.LeftLetter" style="top: 82%">{{ displayLetters_[11] }}</div>
     </div>
   </div>
 </template>
@@ -33,6 +33,23 @@
 <script>
 export default {
   name: "LetterBoxed",
+
+  props: {
+    letters: {
+      type: String,
+      default: '',
+    },
+  },
+
+  computed: {
+    displayLetters_() {
+      if (!this.letters) {
+        return ''.padEnd(12, ' ');
+      }
+
+      return this.letters.trim().toUpperCase().padEnd(12, ' ');
+    },
+  },
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.Host">
-    <LetterBoxed />
+    <LetterBoxed :letters="'asdf'" />
 
     <!--
     <div class="Form">
