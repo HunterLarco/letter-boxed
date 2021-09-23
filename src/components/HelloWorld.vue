@@ -1,67 +1,73 @@
 <template>
   <div :class="$style.Host">
-    <div>
-      <div :class="$style.InputBar">
-        <input
-          :class="$style.LettersInput"
-          v-model="letters_"
-          maxlength="12"
-          @keydown="enforcePattern_($event, /^[a-zA-Z]*$/)"
-          @keypress.enter="submit_"
-        />
-      </div>
-      <div>
-        <LetterBoxed :letters="letters_" />
-      </div>
-      <div :class="$style.ButtonBar">
-        <div
-          :class="clearEnabled_ ? $style.Button : $style.Button_Disabled"
-          tabindex="0"
-          @click="clear_"
-          @keypress.enter="clear_"
-        >
-          Clear
+    <div :class="$style.Frame">
+      <div :class="$style.Game">
+        <div :class="$style.InputBar">
+          <input
+            :class="$style.LettersInput"
+            v-model="letters_"
+            maxlength="12"
+            placeholder="abc..."
+            @keydown="enforcePattern_($event, /^[a-zA-Z]*$/)"
+            @keypress.enter="submit_"
+          />
         </div>
-        <div
-          :class="submitEnabled_ ? $style.Button : $style.Button_Disabled"
-          tabindex="0"
-          @keypress.enter="submit_"
-          @click="submit_"
-        >
-          Solve
+        <div>
+          <LetterBoxed :letters="letters_" />
         </div>
-      </div>
-    </div>
-
-    <div class="Solutions">
-      <template v-if="solutions.twoWords.length">
-        <div><br /><b>Two Words:</b></div>
-
-        <div class="Solution" v-for="solution of solutions.twoWords">
-          <div class="Word" v-for="word of solution">
-            {{ word }}
+        <div :class="$style.ButtonBar">
+          <div
+            :class="clearEnabled_ ? $style.Button : $style.Button_Disabled"
+            tabindex="0"
+            @click="clear_"
+            @keypress.enter="clear_"
+          >
+            Clear
           </div>
-          ({{ solution.join("").length }})
-        </div>
-      </template>
-
-      <template
-        v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
-      >
-        <div><br /><b>Two Words:</b></div>
-        <div class="Solution">There are no two word solutions.</div>
-      </template>
-
-      <template v-if="solutions.minLetters.length">
-        <div><br /><b>Min Letters:</b></div>
-
-        <div class="Solution" v-for="solution of solutions.minLetters">
-          <div class="Word" v-for="word of solution">
-            {{ word }}
+          <div
+            :class="submitEnabled_ ? $style.Button : $style.Button_Disabled"
+            tabindex="0"
+            @keypress.enter="submit_"
+            @click="submit_"
+          >
+            Solve
           </div>
-          ({{ solution.join("").length }})
         </div>
-      </template>
+      </div>
+
+      <div :class="$style.Solutions">
+        <template v-if="solutions.twoWords.length">
+          <div><b>Two Words:</b></div>
+
+          <div :class="$style.Solution" v-for="solution of solutions.twoWords">
+            <div :class="$style.Word" v-for="word of solution">
+              {{ word }}
+            </div>
+            ({{ solution.join("").length }})
+          </div>
+        </template>
+
+        <template
+          v-if="solutions.twoWords.length == 0 && solutions.minLetters.length"
+        >
+          <div><b>Two Words:</b></div>
+          <div :class="$style.Solution">There are no two word solutions.</div>
+        </template>
+
+        <template v-if="solutions.minLetters.length">
+          <div><br /><b>Min Letters:</b></div>
+
+          <div
+            :class="$style.Solution"
+            v-for="solution of solutions.minLetters"
+          >
+            <div :class="$style.Word" v-for="word of solution">
+              {{ word }}
+            </div>
+            ({{ solution.join("").length }})
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -79,7 +85,7 @@ export default {
       letters_: "",
 
       solutions: {
-        state: null,
+        letters: null,
         minLetters: [],
         twoWords: [],
       },
@@ -120,7 +126,7 @@ export default {
         this.letters_.slice(9, 12),
       ];
 
-      this.solutions.state = "solving";
+      this.solutions.letters = this.letters_;
 
       this.$nextTick(() => {
         this.solutions.twoWords = letterBoxed({
@@ -132,8 +138,6 @@ export default {
           edges,
           mode: LetterBoxedMode.MinLetters,
         });
-
-        this.solutions.state = "solved";
       });
     },
   },
@@ -144,7 +148,9 @@ export default {
     },
 
     submitEnabled_() {
-      return this.letters_.length == 12 && this.solutions.state == null;
+      return (
+        this.letters_.length == 12 && this.solutions.letters != this.letters_
+      );
     },
   },
 };
@@ -157,6 +163,12 @@ export default {
 .Host {
   @include layout-center;
   @include layout-fill;
+}
+
+.Frame {
+  @include layout-horizontal;
+
+  grid-gap: 30px;
 }
 
 .InputBar {
@@ -178,6 +190,10 @@ export default {
   text-align: center;
   text-transform: uppercase;
   width: 240px;
+
+  &::placeholder {
+    color: rgba(51, 51, 51, 0.35);
+  }
 }
 
 .ButtonBar {

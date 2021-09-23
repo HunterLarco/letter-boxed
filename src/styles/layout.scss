@@ -6,8 +6,30 @@
   height: 100%;
 }
 
+@mixin layout-horizontal {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+@mixin layout-vertical {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 @mixin layout-center {
   align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+@mixin layout-vertical-center {
+  align-items: center;
+  display: flex;
+}
+
+@mixin layout-horizontal-center {
   display: flex;
   justify-content: center;
 }
