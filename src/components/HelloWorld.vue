@@ -1,7 +1,13 @@
 <template>
   <div :class="$style.Host">
-    <input v-model="letters_" />
-    <LetterBoxed :letters="letters_" />
+    <div>
+      <div :class="$style.InputBar">
+        <input :class="$style.LettersInput" v-model="letters_" maxlength="12" />
+      </div>
+      <div>
+        <LetterBoxed :letters="letters_" />
+      </div>
+    </div>
 
     <!--
     <div class="Form">
@@ -100,7 +106,7 @@ export default {
 
   data() {
     return {
-      letters_: '',
+      letters_: "",
       solutions: {
         minLetters: [],
         twoWords: [],
@@ -208,6 +214,27 @@ export default {
 
 .Form {
   @include fonts-nytimes;
+}
+
+.InputBar {
+  padding-bottom: 30px;
+}
+
+.LettersInput {
+  @include fonts-nytimes;
+
+  background: none;
+  border: none;
+  border-bottom: 3px solid #000;
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 auto;
+  outline: none;
+  padding: 6px 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 240px;
 }
 
 .Input {
